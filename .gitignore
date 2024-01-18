@@ -1,0 +1,27 @@
+# Arquivos temporários
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.iml
+
+# Diretórios específicos
+/target/
+/out/
+/.idea/
+
+# Arquivos de compilação
+*.class
+
+# Dependências geradas pelo Maven
+/.m2/
+target/
+
+# Arquivos de configuração de IDEs
+/.project
+/.classpath
+/.settings/
+
+# Logs
+*.log
