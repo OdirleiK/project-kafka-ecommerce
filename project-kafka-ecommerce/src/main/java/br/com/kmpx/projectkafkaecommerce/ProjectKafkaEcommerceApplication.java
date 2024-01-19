@@ -15,7 +15,7 @@ public class ProjectKafkaEcommerceApplication {
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		var producer = new KafkaProducer<String, String>(properties());
-		var value = "232123,8989,45321";
+		var value = "9x32123,8989,45321";
 		var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
 		producer.send(record, (data, ex) -> {
 			if(ex != null) {
