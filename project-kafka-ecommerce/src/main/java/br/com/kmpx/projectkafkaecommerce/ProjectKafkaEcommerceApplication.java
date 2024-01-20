@@ -2,6 +2,7 @@ package br.com.kmpx.projectkafkaecommerce;
 
 import java.security.Timestamp;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.producer.Callback;
@@ -16,11 +17,12 @@ public class ProjectKafkaEcommerceApplication {
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		var producer = new KafkaProducer<String, String>(properties());
-		var value = "9x32123,8989,45321";
 		var email = "Thank you for your order! We are processing your order!";
-		
-		var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
-		var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", email, email);
+		var key = UUID.randomUUID().toString();
+		var value = key + ",8989,45321";
+
+		var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
+		var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", key, email);
 		
 		
 		Callback callback = (data, ex) -> {
