@@ -1,6 +1,5 @@
 package br.com.kmpx.projectkafkaecommerce;
 
-import java.security.Timestamp;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
