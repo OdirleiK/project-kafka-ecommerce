@@ -1,7 +1,6 @@
 package br.com.kmpx.projectkafkaecommerce;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -28,7 +27,7 @@ public class LogService {
 					System.out.println(record.offset());
 
 				}
-			}
+			}	
 		}
 	}
 
