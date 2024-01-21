@@ -1,5 +1,7 @@
 package br.com.kmpx.projectkafkaecommerce;
 
+import java.util.HashMap;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class FraudDectectorService {
@@ -9,7 +11,8 @@ public class FraudDectectorService {
 		try(var service = new KafkaService<>(FraudDectectorService.class.getSimpleName(), 
 									  	   "ECOMMERCE_NEW_ORDER", 
 									        fraudService::parse,
-									        Order.class)) {
+									        Order.class,
+									        new HashMap<>())) {
 			service.run();
 		}
 	}

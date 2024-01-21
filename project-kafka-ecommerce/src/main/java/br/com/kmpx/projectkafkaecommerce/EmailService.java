@@ -1,5 +1,7 @@
 package br.com.kmpx.projectkafkaecommerce;
 
+import java.util.HashMap;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class EmailService {
@@ -9,7 +11,8 @@ public class EmailService {
 		try (var service = new KafkaService<>(EmailService.class.getSimpleName(), 
 									   "ECOMMERCE_SEND_EMAIL", 
 									   emailService::parse,
-									   Email.class)) {
+									   Email.class,
+									   new HashMap<>())) {
 			service.run();
 		}
 
