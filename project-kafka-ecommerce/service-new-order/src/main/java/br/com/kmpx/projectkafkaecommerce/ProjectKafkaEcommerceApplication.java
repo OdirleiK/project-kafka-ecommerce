@@ -12,7 +12,7 @@ public class ProjectKafkaEcommerceApplication {
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		try (var orderDispatcher = new KafkaDispatcher<Order>()) {
 			try (var emailDispatcher = new KafkaDispatcher<String>()) {
-				for(var i = 0; i < 10; i++) {
+				for(var i = 0; i < 5; i++) {
 					var userId = UUID.randomUUID().toString();
 					var orderId = UUID.randomUUID().toString();
 					var amount = new BigDecimal(Math.random() * 5000 + 1);
