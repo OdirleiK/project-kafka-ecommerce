@@ -42,7 +42,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 				for(var record : records) {
 					try {
 						parse.consume(record);
-					} catch (InterruptedException | ExecutionException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}

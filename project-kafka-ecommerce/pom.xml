@@ -69,5 +69,6 @@
 		<module>service-log</module>
 		<module>service-new-order</module>
 		<module>commom-kafka</module>
+		<module>service-users</module>
 	</modules>
 </project>

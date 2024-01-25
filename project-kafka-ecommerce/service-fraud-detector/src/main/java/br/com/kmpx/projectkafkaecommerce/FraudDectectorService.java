@@ -43,8 +43,6 @@ public class FraudDectectorService {
 			orderDispathcer.send("ECOMMERCE_ORDER_APPROVED", order.getUserId(), order);
 
 		}
-		
-		
 	}
 	
 	private boolean isFraud(Order order) {
