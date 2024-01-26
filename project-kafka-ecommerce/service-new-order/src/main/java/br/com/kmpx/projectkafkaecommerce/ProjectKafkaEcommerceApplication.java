@@ -16,12 +16,14 @@ public class ProjectKafkaEcommerceApplication {
 					var userId = UUID.randomUUID().toString();
 					var orderId = UUID.randomUUID().toString();
 					var amount = new BigDecimal(Math.random() * 5000 + 1);
-					var order = new Order(userId, orderId, amount);
-					var email = "processing your order Thank you for your order! We are processing your order!";
+					var email = Math.random() + "@email.com";
+					
+					var order = new Order(userId, orderId, amount, email);
+					var emailCode = "processing your order Thank you for your order! We are processing your order!";
 					
 					//var email = "Thank you for your order! We are processing your order!";
 					orderDispatcher.send("ECOMMERCE_NEW_ORDER", userId, order);
-					emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userId, email);
+					emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userId, emailCode);
 				}
 			}
 		}
