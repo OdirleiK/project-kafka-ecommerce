@@ -70,5 +70,6 @@
 		<module>service-new-order</module>
 		<module>commom-kafka</module>
 		<module>service-users</module>
+		<module>service-http-ecommerce</module>
 	</modules>
 </project>
