@@ -14,9 +14,11 @@ class KafkaDispatcher<T> implements Closeable{
 
 	private final KafkaProducer<String, Message<T>> producer;
 
+	
 	public KafkaDispatcher() {
 		this.producer = new KafkaProducer<>(properties());
 	}
+	
 	
 	private static Properties properties() {
 		var properties = new Properties();
@@ -27,8 +29,8 @@ class KafkaDispatcher<T> implements Closeable{
 		return properties;
 	}
 
-	void send(String topic, String key, T payload) throws InterruptedException, ExecutionException {
-		var value = new Message<T>(new CorrelationId(), payload);
+	void send(String topic, String key, CorrelationId id, T payload) throws InterruptedException, ExecutionException {
+		var value = new Message<T>(id, payload);
 		var record = new ProducerRecord<>(topic, key, value);
 
 		Callback callback = (data, ex) -> {

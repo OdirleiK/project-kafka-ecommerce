@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ProjectKafkaEcommerceApplication {
 
+	private static final String NAME_CLASS = ProjectKafkaEcommerceApplication.class.getSimpleName();
+	
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		try (var orderDispatcher = new KafkaDispatcher<Order>()) {
 			try (var emailDispatcher = new KafkaDispatcher<String>()) {
@@ -21,8 +23,8 @@ public class ProjectKafkaEcommerceApplication {
 					var emailCode = "processing your order Thank you for your order! We are processing your order!";
 					
 					//var email = "Thank you for your order! We are processing your order!";
-					orderDispatcher.send("ECOMMERCE_NEW_ORDER", email, order);
-					emailDispatcher.send("ECOMMERCE_SEND_EMAIL", email, emailCode);
+					orderDispatcher.send("ECOMMERCE_NEW_ORDER", email, new CorrelationId(NAME_CLASS), order);
+					emailDispatcher.send("ECOMMERCE_SEND_EMAIL", email,  new CorrelationId(NAME_CLASS),emailCode);
 				}
 			}
 		}

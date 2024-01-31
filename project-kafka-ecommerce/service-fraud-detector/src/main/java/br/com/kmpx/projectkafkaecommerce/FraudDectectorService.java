@@ -8,6 +8,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class FraudDectectorService {
 	
+	private static final String NAME_CLASS = FraudDectectorService.class.getSimpleName();
+
+	
 	public static void main(String[] args) {
 		var fraudService = new FraudDectectorService();
 		try(var service = new KafkaService<>(FraudDectectorService.class.getSimpleName(), 
@@ -20,7 +23,7 @@ public class FraudDectectorService {
 	}
 	private final KafkaDispatcher<Order> orderDispathcer = new KafkaDispatcher<>();
 	
-	private void parse(ConsumerRecord<String, Order> record) throws InterruptedException, ExecutionException {
+	private void parse(ConsumerRecord<String, Message<Order>> record) throws InterruptedException, ExecutionException {
 		System.out.println("=========================================");
 		System.out.println("Processing new order, checking for fraud");
 		System.out.println(record.key());
@@ -32,16 +35,22 @@ public class FraudDectectorService {
 		}catch(InterruptedException e) {
 			e.printStackTrace();
 		}
+		var message = record.value();
+		var order = message.getPayLoad();
 		
-		var order = record.value();
 		if(isFraud(order)) {
 			//pretending that the fraud happens when the amount is >=4500
 			System.out.println("Order is a fraud!");	
-			orderDispathcer.send("ECOMMERCE_ORDER_REJECTED", order.getEmail(), order);
+			orderDispathcer.send("ECOMMERCE_ORDER_REJECTED", 
+								order.getEmail(), 
+								message.getId().continueWith(FraudDectectorService.class.getSimpleName()), 
+								order);
 		}else {
 			System.out.println("Approved: " + order);
-			orderDispathcer.send("ECOMMERCE_ORDER_APPROVED", order.getEmail(), order);
-
+			orderDispathcer.send("ECOMMERCE_ORDER_APPROVED", 
+								order.getEmail(), 
+								message.getId().continueWith(FraudDectectorService.class.getSimpleName()),
+								order);
 		}
 	}
 	

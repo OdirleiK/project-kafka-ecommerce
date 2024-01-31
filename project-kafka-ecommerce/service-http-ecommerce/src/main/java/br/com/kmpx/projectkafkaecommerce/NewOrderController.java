@@ -18,14 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "new")
 public class NewOrderController {
 
+	private static final String NAME_CLASS = NewOrderController.class.getSimpleName();
+
+	
 	@Autowired
 	public KafkaDispatcher<Order> orderDispatcher;
 
 	@Autowired
 	public KafkaDispatcher<String> emailDispatcher;
 	
-	@Autowired
-	public KafkaDispatcher<String> batchDispatcher;
+
 
 	@PostMapping("/new-order")
 	public ResponseEntity<String> newOrder(@RequestParam String emailParam, @RequestParam String amountValue) throws ServletException {
@@ -38,8 +40,8 @@ public class NewOrderController {
 	        var order = new Order(orderId, amount, email);
 	        var emailCode = "processing your order Thank you for your order! We are processing your order!";
 
-	        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, order);
-	        emailDispatcherLocal.send("ECOMMERCE_SEND_EMAIL", email, emailCode);
+	        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, new CorrelationId(NAME_CLASS), order);
+	        emailDispatcherLocal.send("ECOMMERCE_SEND_EMAIL", email, new CorrelationId(NAME_CLASS), emailCode);
 
 	        System.out.println("New order sent successfully");
 
@@ -49,17 +51,5 @@ public class NewOrderController {
 	    }
 	}
 	
-	@PostMapping("/generate-all-reports")
-	public ResponseEntity<String> generateAllReports() throws ServletException {
-	    try (var batchDispatcherLocal = batchDispatcher) {
-	    	
-	    	batchDispatcher.send("SEND_MESSAGE_TO_ALL_USERS", "USER_GENERATE_READING_REPORT","USER_GENERATE_READING_REPORT");
-	    	
-	    	
-	    	System.out.println("Sent generate report to all users!");
-	        return ResponseEntity.status(HttpStatus.OK).body("Report requests generated");
-	    } catch (InterruptedException | ExecutionException  e) {
-	        throw new ServletException(e);
-	    }
-	}
+	
 }

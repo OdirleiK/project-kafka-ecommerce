@@ -30,14 +30,15 @@ private final Connection connection;
 	public static void main(String[] args) throws SQLException {
 		var batchService = new BatchSendMessageService();
 		try(var service = new KafkaService<>(BatchSendMessageService.class.getSimpleName(), 
-									  	   "SEND_MESSAGE_TO_ALL_USERS", 
+									  	   "ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS", 
 									  	    batchService::parse,
 									        String.class,
 									        new HashMap<>())) {
 			service.run();
 		}
 	}
-	private final KafkaDispatcher<User> userDispatcher =  new KafkaDispatcher<>();
+	
+	private final KafkaDispatcher<User> userDispatcher = new KafkaDispatcher<>();
 	
 	private void parse(ConsumerRecord<String, Message<String>> record) throws SQLException, InterruptedException, ExecutionException {
 		System.out.println("=========================================");
@@ -48,7 +49,10 @@ private final Connection connection;
 		
 		
 		for(User user: getAllUsers()) {
-    		userDispatcher.send(message.getPayLoad(), user.getUuid(), user);
+    		userDispatcher.send(message.getPayLoad(), 
+    							user.getUuid(), 
+    							message.getId().continueWith((BatchSendMessageService.class.getSimpleName())), 
+    							user);
     	}
 
 	}
