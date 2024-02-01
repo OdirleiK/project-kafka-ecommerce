@@ -43,13 +43,13 @@ public class FraudDectectorService {
 			System.out.println("Order is a fraud!");	
 			orderDispathcer.send("ECOMMERCE_ORDER_REJECTED", 
 								order.getEmail(), 
-								message.getId().continueWith(FraudDectectorService.class.getSimpleName()), 
+								message.getId().continueWith(NAME_CLASS), 
 								order);
 		}else {
 			System.out.println("Approved: " + order);
 			orderDispathcer.send("ECOMMERCE_ORDER_APPROVED", 
 								order.getEmail(), 
-								message.getId().continueWith(FraudDectectorService.class.getSimpleName()),
+								message.getId().continueWith(NAME_CLASS),
 								order);
 		}
 	}
