@@ -48,7 +48,7 @@ private final Connection connection;
 		
 		
 		for(User user: getAllUsers()) {
-    		userDispatcher.send(message.getPayLoad(), 
+    		userDispatcher.sendAsync(message.getPayLoad(), 
     							user.getUuid(), 
     							message.getId().continueWith((BatchSendMessageService.class.getSimpleName())), 
     							user);
