@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -17,7 +16,6 @@ public class ReadingReportService {
 		try(var service = new KafkaService<>(ReadingReportService.class.getSimpleName(), 
 									  	   "ECOMMERCE_USER_GENERATE_READING_REPORT", 
 									  	   	reportService::parse,
-									        User.class,
 									        new HashMap<>())) {
 			service.run();
 		}

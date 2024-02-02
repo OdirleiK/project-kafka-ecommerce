@@ -32,7 +32,6 @@ private final Connection connection;
 		try(var service = new KafkaService<>(BatchSendMessageService.class.getSimpleName(), 
 									  	   "ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS", 
 									  	    batchService::parse,
-									        String.class,
 									        new HashMap<>())) {
 			service.run();
 		}
