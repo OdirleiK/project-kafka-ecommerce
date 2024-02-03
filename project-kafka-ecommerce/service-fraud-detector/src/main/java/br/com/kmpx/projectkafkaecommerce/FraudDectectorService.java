@@ -23,6 +23,7 @@ public class FraudDectectorService {
 			service.run();
 		}
 	}
+	
 	private final KafkaDispatcher<Order> orderDispathcer = new KafkaDispatcher<>();
 	
 	private void parse(ConsumerRecord<String, Message<Order>> record) throws InterruptedException, ExecutionException {

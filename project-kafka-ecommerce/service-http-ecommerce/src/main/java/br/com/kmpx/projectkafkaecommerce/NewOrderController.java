@@ -23,27 +23,19 @@ public class NewOrderController {
 	@Autowired
 	public KafkaDispatcher<Order> orderDispatcher;
 
-	@Autowired
-	public KafkaDispatcher<String> emailDispatcher;
-	
-
-
 	@PostMapping("/new-order")
 	public ResponseEntity<String> newOrder(@RequestParam String emailParam, @RequestParam String amountValue) throws ServletException {
-	    try (var orderDispatcherLocal = orderDispatcher; var emailDispatcherLocal = emailDispatcher) {
+	    try (var orderDispatcherLocal = orderDispatcher) {
 	    	//we are not caring about any security issues, we are only showing how to use as a starting point 
 	        var orderId = UUID.randomUUID().toString();
 	        var amount = new BigDecimal(amountValue);
 	        var email = emailParam;
 
-	        var order = new Order(orderId, amount, email);
-	        var emailCode = "processing your order Thank you for your order! We are processing your order!";
-
+	        var order = new Order(orderId, amount, email);	      
 	        var id = new CorrelationId(NewOrderController.class.getSimpleName());
 
 	        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, id, order);
-	        emailDispatcherLocal.send("ECOMMERCE_SEND_EMAIL", email, id, emailCode);
-
+	        
 	        System.out.println("New order sent successfully");
 
 	        return ResponseEntity.status(HttpStatus.OK).body("New order sent successfully");
