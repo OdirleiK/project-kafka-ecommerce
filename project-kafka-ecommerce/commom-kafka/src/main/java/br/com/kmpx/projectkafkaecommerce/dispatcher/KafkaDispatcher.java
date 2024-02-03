@@ -1,4 +1,4 @@
-package br.com.kmpx.projectkafkaecommerce;
+package br.com.kmpx.projectkafkaecommerce.dispatcher;
 
 import java.io.Closeable;
 import java.util.Properties;
@@ -12,7 +12,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-class KafkaDispatcher<T> implements Closeable{
+import br.com.kmpx.projectkafkaecommerce.CorrelationId;
+import br.com.kmpx.projectkafkaecommerce.Message;
+
+public class KafkaDispatcher<T> implements Closeable{
 
 	private final KafkaProducer<String, Message<T>> producer;
 
@@ -31,14 +34,14 @@ class KafkaDispatcher<T> implements Closeable{
 		return properties;
 	}
 
-	void send(String topic, String key, CorrelationId id, T payload) throws InterruptedException, ExecutionException {
+	public void send(String topic, String key, CorrelationId id, T payload) throws InterruptedException, ExecutionException {
 		var future = sendAsync(topic, key, id, payload);
 		future.get();
 	}
 
 
-	Future<RecordMetadata> sendAsync(String topic, String key, CorrelationId id, T payload) {
-		var value = new Message<T>(id, payload);
+	public Future<RecordMetadata> sendAsync(String topic, String key, CorrelationId id, T payload) {
+		var value = new Message<T>(id.continueWith("_" + topic), payload);
 		var record = new ProducerRecord<>(topic, key, value);
 
 		Callback callback = (data, ex) -> {

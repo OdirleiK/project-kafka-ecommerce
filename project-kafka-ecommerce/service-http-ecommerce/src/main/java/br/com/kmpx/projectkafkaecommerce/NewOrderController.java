@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.kmpx.projectkafkaecommerce.dispatcher.KafkaDispatcher;
+
 @RestController
 @RequestMapping(value = "new")
 public class NewOrderController {
-
-	private static final String NAME_CLASS = NewOrderController.class.getSimpleName();
-
 	
 	@Autowired
 	public KafkaDispatcher<Order> orderDispatcher;
@@ -40,8 +39,10 @@ public class NewOrderController {
 	        var order = new Order(orderId, amount, email);
 	        var emailCode = "processing your order Thank you for your order! We are processing your order!";
 
-	        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, new CorrelationId(NAME_CLASS), order);
-	        emailDispatcherLocal.send("ECOMMERCE_SEND_EMAIL", email, new CorrelationId(NAME_CLASS), emailCode);
+	        var id = new CorrelationId(NewOrderController.class.getSimpleName());
+
+	        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, id, order);
+	        emailDispatcherLocal.send("ECOMMERCE_SEND_EMAIL", email, id, emailCode);
 
 	        System.out.println("New order sent successfully");
 

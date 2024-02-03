@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.kmpx.projectkafkaecommerce.dispatcher.KafkaDispatcher;
+
 @RestController
 @RequestMapping(value = "order")
 public class ReportsController {
