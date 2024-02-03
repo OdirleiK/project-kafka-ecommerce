@@ -6,13 +6,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
- class KafkaService<T> implements Closeable{
+class KafkaService<T> implements Closeable {
 
 	private final KafkaConsumer<String, Message<T>> consumer;
 	private final ConsumerFunction parse;
@@ -26,30 +27,36 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 		this(parse, groupId, properties);
 		consumer.subscribe(topic);
 	}
-	
+
 	private KafkaService(ConsumerFunction<T> parse, String groupId, Map<String, String> properties) {
 		this.parse = parse;
-		this.consumer = new KafkaConsumer<>(getProperties( groupId, properties));
+		this.consumer = new KafkaConsumer<>(getProperties(groupId, properties));
 	}
 
-	public void run() {
-		while(true) {
-			var records = consumer.poll(Duration.ofMillis(100));
-			
-			if(!records.isEmpty()) {
-				System.out.println("found " + records.count() +"registers");
-				for(var record : records) {
-					try {
-						parse.consume(record);
-					} catch (Exception e) {
-						e.printStackTrace();
+	public void run() throws ExecutionException, InterruptedException {
+		try(var deadLetter = new KafkaDispatcher<>()) {
+			while(true) {
+				var records = consumer.poll(Duration.ofMillis(100));
+				
+				if(!records.isEmpty()) {
+					System.out.println("found " + records.count() +"registers");
+					for(var record : records) {
+						try {
+							parse.consume(record);
+						} catch (Exception e) {
+							var message = record.value();
+							deadLetter.send("ECOMMERCE_DEADLETTER", message.getId().toString(),
+											message.getId().continueWith("DeadLetter"),
+											new GsonSerializer().serialize("", message));
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
 	}
-	
-	private Properties getProperties( String groupId, Map<String, String> overrideProperties) {
+
+	private Properties getProperties(String groupId, Map<String, String> overrideProperties) {
 		var properties = new Properties();
 		properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 		properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());

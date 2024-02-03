@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -25,7 +26,7 @@ public class CreateUserService {
 		}
 	}
 	
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
 		var userService = new CreateUserService();
 		try(var service = new KafkaService<>(CreateUserService.class.getSimpleName(), 
 									  	   "ECOMMERCE_NEW_ORDER", 

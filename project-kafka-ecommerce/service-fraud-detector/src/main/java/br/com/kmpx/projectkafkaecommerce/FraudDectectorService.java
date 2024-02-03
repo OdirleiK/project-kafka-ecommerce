@@ -11,7 +11,7 @@ public class FraudDectectorService {
 	private static final String NAME_CLASS = FraudDectectorService.class.getSimpleName();
 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ExecutionException, InterruptedException {
 		var fraudService = new FraudDectectorService();
 		try(var service = new KafkaService<>(FraudDectectorService.class.getSimpleName(), 
 									  	   "ECOMMERCE_NEW_ORDER", 
