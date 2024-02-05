@@ -4,6 +4,9 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+import br.com.kmpx.projectkafkaecommerce.consumer.ConsumerService;
+import br.com.kmpx.projectkafkaecommerce.consumer.ServiceRunner;
+
 public class EmailService implements ConsumerService<String>{
 	
 	public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -18,7 +21,7 @@ public class EmailService implements ConsumerService<String>{
 		return "ECOMMERCE_SEND_EMAIL";
 	}
 	
-	public void parse(ConsumerRecord<String, Message<Email>> record) {
+	public void parse(ConsumerRecord<String, Message<String>> record) {
 		System.out.println("=========================================");
 		System.out.println("Send email");
 		System.out.println(record.key());

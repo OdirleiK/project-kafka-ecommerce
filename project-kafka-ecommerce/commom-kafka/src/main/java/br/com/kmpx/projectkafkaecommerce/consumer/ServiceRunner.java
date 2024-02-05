@@ -1,4 +1,4 @@
-package br.com.kmpx.projectkafkaecommerce;
+package br.com.kmpx.projectkafkaecommerce.consumer;
 
 import java.util.concurrent.Executors;
 

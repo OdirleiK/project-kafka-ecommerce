@@ -1,10 +1,8 @@
-package br.com.kmpx.projectkafkaecommerce;
+package br.com.kmpx.projectkafkaecommerce.consumer;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-
-import br.com.kmpx.projectkafkaecommerce.consumer.KafkaService;
 
 public class ServiceProvider<T> implements Callable<Void> {
 
