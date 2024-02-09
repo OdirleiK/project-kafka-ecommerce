@@ -33,6 +33,11 @@
 	  	<artifactId>commom-kafka</artifactId>
 	  	<version>0.0.1-SNAPSHOT</version>
 	  </dependency>
+	  <dependency>
+	  	<groupId>br.com.kmpx</groupId>
+	  	<artifactId>commom-database</artifactId>
+	  	<version>0.0.1-SNAPSHOT</version>
+	  </dependency>
   </dependencies>
   <artifactId>service-http-ecommerce</artifactId>
 </project>

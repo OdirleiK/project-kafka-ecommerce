@@ -1,7 +1,8 @@
 package br.com.kmpx.projectkafkaecommerce;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
@@ -24,22 +25,31 @@ public class NewOrderController {
 	public KafkaDispatcher<Order> orderDispatcher;
 
 	@PostMapping("/new-order")
-	public ResponseEntity<String> newOrder(@RequestParam String emailParam, @RequestParam String amountValue) throws ServletException {
+	public ResponseEntity<String> newOrder(@RequestParam String emailParam, @RequestParam String amountValue, @RequestParam String uuid) throws ServletException, IOException {
 	    try (var orderDispatcherLocal = orderDispatcher) {
 	    	//we are not caring about any security issues, we are only showing how to use as a starting point 
-	        var orderId = UUID.randomUUID().toString();
+	        var orderId = uuid;
 	        var amount = new BigDecimal(amountValue);
 	        var email = emailParam;
-
 	        var order = new Order(orderId, amount, email);	      
 	        var id = new CorrelationId(NewOrderController.class.getSimpleName());
 
-	        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, id, order);
+	       
+	        try (var database = new OrdersDatabase()) {
+	        	if(database.saveNew(order)) {
+			        orderDispatcherLocal.send("ECOMMERCE_NEW_ORDER", email, id, order);
+			        System.out.println("New order sent successfully");
+			        return ResponseEntity.status(HttpStatus.OK).body("New order sent successfully");
+		        } else {
+			        System.out.println("Old order received");
+			        return ResponseEntity.status(HttpStatus.OK).body("Old order received");
+		        }
+	        } 
 	        
-	        System.out.println("New order sent successfully");
+	        
+	        
 
-	        return ResponseEntity.status(HttpStatus.OK).body("New order sent successfully");
-	    } catch (InterruptedException | ExecutionException  e) {
+	    } catch (InterruptedException | ExecutionException | SQLException e) {
 	        throw new ServletException(e);
 	    }
 	}
