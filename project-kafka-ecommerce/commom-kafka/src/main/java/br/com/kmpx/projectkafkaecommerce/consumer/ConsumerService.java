@@ -10,5 +10,5 @@ import br.com.kmpx.projectkafkaecommerce.Message;
 public interface ConsumerService<T> {
 	String getConsumerGroup();
 	String getTopic();
-	void parse(ConsumerRecord<String, Message<T>> record) throws IOException, InterruptedException, ExecutionException;
+	void parse(ConsumerRecord<String, Message<T>> record) throws Exception;
 }
