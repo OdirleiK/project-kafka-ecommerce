@@ -73,5 +73,6 @@
 		<module>service-http-ecommerce</module>
 		<module>service-reading-report</module>
 		<module>service-email-new-order</module>
+		<module>commom-database</module>
 	</modules>
 </project>

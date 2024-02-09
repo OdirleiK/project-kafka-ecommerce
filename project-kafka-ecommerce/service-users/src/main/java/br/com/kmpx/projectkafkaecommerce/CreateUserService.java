@@ -9,22 +9,15 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import br.com.kmpx.projectkafkaecommerce.consumer.ConsumerService;
 import br.com.kmpx.projectkafkaecommerce.consumer.ServiceRunner;
+import br.com.kmpx.projectkafkaecommerce.database.LocalDataBase;
 
 public class CreateUserService implements ConsumerService<Order>{
 	
-	private final Connection connection;
+	private LocalDataBase dataBase;
 	
 	private CreateUserService() throws SQLException {
-		String url = "jdbc:sqlite:target/users_database.db";
-		connection = DriverManager.getConnection(url);
-		
-		try {
-			connection.createStatement().execute("create table Users (" +
-											     "uuid varchar(200) primary key," +
-												 "email varchar(200))");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.dataBase = new LocalDataBase("users_database");
+		this.dataBase.createIfNotExists("create table Users (uuid varchar(200) primary key, email varchar(200))");
 	}
 	
 	public static void main(String[] args){
@@ -54,19 +47,15 @@ public class CreateUserService implements ConsumerService<Order>{
 	}
 
 	private void insertNewUser(String email) throws SQLException {
-		var insert = connection.prepareStatement("insert into Users (uuid, email) values (?, ?)");
-		var uuid = UUID.randomUUID().toString();
+		var uuid = UUID.randomUUID().toString();		
+		dataBase.update("insert into Users (uuid, email) values (?, ?)", uuid, email);
 		
-		insert.setString(1, uuid);
-		insert.setString(2, email);
-		insert.execute();
 		System.out.println("Usuário" + uuid + "e" + email + "adicionado");
 	}
 
 	private boolean isNewUser(String email) throws SQLException {
-		var exists = connection.prepareStatement("select uuid from Users where email = ? limit 1");
-		exists.setString(1, email);
-		var results = exists.executeQuery();
+		var results = dataBase.query("select uuid from Users where email = ? limit 1");
+
 		return !results.next();
 	}
 
